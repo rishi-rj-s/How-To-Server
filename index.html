@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local Server Setup</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 0.5rem;
+        }
+        .step {
+            background: white;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .step-number {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            margin-right: 0.5rem;
+        }
+        pre {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        code {
+            font-family: 'Courier New', Courier, monospace;
+        }
+        .port-input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 80px;
+        }
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+        #serverOutput {
+            background: #333;
+            color: #0f0;
+            font-family: monospace;
+            padding: 1rem;
+            height: 200px;
+            overflow-y: auto;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Local Development Server Setup</h1>
+    
+    <div class="step">
+        <span class="step-number">1</span>
+        <strong>Save this HTML file</strong>
+    </div>
+    
+    <div class="step">
+        <span class="step-number">2</span>
+        <strong>Start a server using Node.js (recommended)</strong>
+        <p>Install Node.js if you haven't already (download from <a href="https://nodejs.org" target="_blank">nodejs.org</a>), then:</p>
+        
+        <h3>Option 1: One-line server (port 3000)</h3>
+        <pre>npx serve -l 3000</pre>
+        
+        <h3>Option 2: Custom port</h3>
+        <p>Create this as <code>server.js</code> file</p>
+        <pre>const http = require('http');
+const fs = require('fs');
+const path = require('path');
+
+const port = 3000; // Change this to your preferred port
+const server = http.createServer((req, res) => {
+    let filePath = '.' + req.url;
+    if (filePath === './') filePath = './local-server.html';
+    
+    fs.readFile(filePath, (err, content) => {
+        if (err) {
+            res.writeHead(404);
+            res.end('File not found');
+            return;
+        }
+        res.writeHead(200);
+        res.end(content);
+    });
+});
+
+server.listen(port, () => {
+    console.log(`Server running at http://localhost:${port}/`);
+});</pre>
+        
+        <p>Then run:</p>
+        <pre>node server.js</pre>
+        <p id="nodeOutput"></p>
+    </div>
+    
+    <div class="step">
+        <span class="step-number">3</span>
+        <strong>Try it now (if using Chrome)</strong>
+        <p>Enter a port number (4000-9999 recommended):</p>
+        <input type="number" id="portNumber" class="port-input" placeholder="8080" min="1024" max="65535">
+        <button onclick="startServer()">Start Server</button>
+        <div id="serverOutput">Server output will appear here...</div>
+    </div>
+    
+    <div class="step">
+        <span class="step-number">4</span>
+        <strong>Access your server</strong>
+        <p>Once running, open your browser to:</p>
+        <pre id="serverLink">http://localhost:[PORT]</pre>
+    </div>
+
+    <script>
+        function startServer() {
+            const port = document.getElementById('portNumber').value || 8080;
+            document.getElementById('serverLink').textContent = `http://localhost:${port}`;
+            document.getElementById('serverOutput').textContent = `Attempting to serve on port ${port}...`;
+            
+            // This is a mock simulation - in a real browser, we can't actually start a server
+            // For actual use, you'll need to use the Node.js methods described above
+            document.getElementById('serverOutput').textContent += `
+            
+Server simulation (real server needs Node.js):
+
+1. Save the server.js code above
+2. Change the port number to ${port}
+3. Run: node server.js
+
+Your files will be served at http://localhost:${port}
+Ctrl+C to stop the server`;
+        }
+    </script>
+</body>
+</html>
